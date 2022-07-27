@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import MainContext from '../contexts/MainContext';
+import Button from './Button';
 import topics_json from './topics.json'
 
 function TopicTable() {
@@ -8,31 +9,36 @@ function TopicTable() {
 
   useEffect(() => {
     setTopics(topics_json);
-  },[]) 
+  },[setTopics]) 
 
   return (
-    <div className="box">
-    <table className='table is-fullwidth'>
-      <thead>
-        <tr>
-          <th>Pauta</th>
-          <th>Descrição</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-      {topics.map((topic) => (
-        <tr key={topic.id}>
-          <th>{topic.name}</th>
-          <th>{topic.description}</th>
-          <th><a href="#">Iniciar Votação</a>  | <a href="#">Votar</a></th>
-        </tr>
-      ))}
-    </tbody>
-    </table>
-    <span className="icon">
-  <i className="fas fa-home"></i>
-</span>
+    <div className="card">
+      <header class="card-header">
+        <p class="card-header-title">
+          Pautas
+        </p>
+        <button className='card-header-icon'><a href="\"><strong>Nova Pauta</strong></a></button>
+      </header>
+      <div class="card-content">
+        <table className='table is-fullwidth p-0'>
+          <thead>
+            <tr>
+              <th width="30%">Pauta</th>
+              <th width="40%">Descrição</th>
+              <th width="30%">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+          {topics.map((topic) => (
+            <tr key={topic.id}>
+              <th>{topic.name}</th>
+              <th>{topic.description}</th>
+              <th><a href="\">Iniciar Votação</a>  | <a href="\">Votar</a></th>
+            </tr>
+          ))}
+        </tbody>
+        </table>
+      </div>
     </div>
   )
 }

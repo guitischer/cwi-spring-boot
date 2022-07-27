@@ -17,10 +17,6 @@ function App() {
             </p>
           </div>
         </section>
-
-        <div className='is-flex is-flex-direction-column'>
-          <Button text={"Nova Pauta"}/>
-        </div>
         <TopicTable/>
       </MainLayout>
   )
