@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import MainContext from '../contexts/MainContext';
-import Button from './Button';
 import topics_json from './topics.json'
+import RouteLink from './RouteLink';
 
 function TopicTable() {
 
@@ -13,13 +13,14 @@ function TopicTable() {
 
   return (
     <div className="card">
-      <header class="card-header">
-        <p class="card-header-title">
+      <header className="card-header">
+        <p className="card-header-title">
           Pautas
         </p>
-        <button className='card-header-icon'><a href="\"><strong>Nova Pauta</strong></a></button>
+        
+        <RouteLink name={'Nova Pauta'} url={'/add_topic'}/>
       </header>
-      <div class="card-content">
+      <div className="card-content">
         <table className='table is-fullwidth p-0'>
           <thead>
             <tr>

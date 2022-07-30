@@ -1,24 +1,23 @@
+import { Route, Routes } from 'react-router-dom';
 import TopicTable from './components/TopicTable';
-import Button from './components/Button';
+import { MainContextProvider } from './contexts/MainContext';
 import MainLayout from './layout/MainLayout';
+import AddTopic from './pages/AddTopic';
 
 import './styles/App.css';
 
 function App() {
+  
   return (
+    <MainContextProvider>
       <MainLayout>
-        <section className="hero is-primary header">
-          <div className="hero-body">
-            <p className="title">
-              Desafio Técnico CWI
-            </p>
-            <p className="subtitle">
-              Spring Boot
-            </p>
-          </div>
-        </section>
-        <TopicTable/>
+        <Routes>
+          <Route path="/" element={<TopicTable/>} />
+          <Route path="add_topic" element={<AddTopic />} />
+        </Routes>
       </MainLayout>
+    </MainContextProvider>
+    
   )
 
 }
