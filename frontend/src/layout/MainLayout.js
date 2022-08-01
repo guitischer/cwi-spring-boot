@@ -16,7 +16,9 @@ function MainLayout({children}) {
             </p>
           </div>
         </section>
+        <div className='content p-3'>
         {children}
+        </div>
         </div>
       </div>
     </div>

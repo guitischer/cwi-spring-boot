@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import TopicTable from './components/TopicTable';
 import { MainContextProvider } from './contexts/MainContext';
 import MainLayout from './layout/MainLayout';
-import AddTopic from './pages/AddTopic';
+import AddTopic from './pages/topics/AddTopic';
 
 import './styles/App.css';
 
