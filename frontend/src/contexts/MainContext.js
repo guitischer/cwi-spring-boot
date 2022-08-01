@@ -1,12 +1,11 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useState } from 'react'
 
 export const MainContext = createContext();
 
 export function MainContextProvider({children}) {
   const [topics, setTopics] = useState([]);
-  const [currUrl, setCurrUrl] = useState('/');
 
-  const values = {topics, setTopics, currUrl, setCurrUrl}
+  const values = {topics, setTopics}
 
   return (
     <MainContext.Provider value={values}>

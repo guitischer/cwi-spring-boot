@@ -1,9 +1,6 @@
-import React, { useContext, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import BreadcrumbLink from '../components/BreadcrumbLink';
-import MainContext from '../contexts/MainContext';
+import React from 'react'
+
 function MainLayout({children}) {
-  const { currUrl, setCurrUrl } = useContext(MainContext);
 
   return (
     <div className="container">
@@ -18,12 +15,6 @@ function MainLayout({children}) {
               Spring Boot
             </p>
           </div>
-          <nav className="breadcrumb is-small" aria-label="breadcrumbs" style={{padding: '0rem 0rem 1rem 3rem'}}>
-              <ul>
-                <li><BreadcrumbLink name="Home" url="/"></BreadcrumbLink></li>
-                <li><BreadcrumbLink name="Nova Pauta" url="/add_topic"></BreadcrumbLink></li>
-              </ul>
-            </nav>
         </section>
         {children}
         </div>

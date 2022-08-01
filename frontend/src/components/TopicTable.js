@@ -17,7 +17,6 @@ function TopicTable() {
         <p className="card-header-title">
           Pautas
         </p>
-        
         <RouteLink name={'Nova Pauta'} url={'/add_topic'}/>
       </header>
       <div className="card-content">
