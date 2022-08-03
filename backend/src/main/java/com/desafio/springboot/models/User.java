@@ -1,4 +1,4 @@
-package cwi.desafio.backend.models;
+package com.desafio.springboot.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

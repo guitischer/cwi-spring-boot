@@ -1,4 +1,4 @@
-package cwi.desafio.backend.controllers;
+package com.desafio.springboot.controllers;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import cwi.desafio.backend.exceptions.ResourceNotFoundException;
-import cwi.desafio.backend.models.User;
-import cwi.desafio.backend.repositories.UserRepository;
+import com.desafio.springboot.exceptions.ResourceNotFoundException;
+import com.desafio.springboot.models.User;
+import com.desafio.springboot.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/users")

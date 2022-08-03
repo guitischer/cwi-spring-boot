@@ -1,9 +1,9 @@
-package cwi.desafio.backend.repositories;
+package com.desafio.springboot.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import cwi.desafio.backend.models.User;
+import com.desafio.springboot.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
