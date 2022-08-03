@@ -3,26 +3,25 @@ package cwi.desafio.backend.models;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
-
-
 @Table(name =  "users")
-@Entity
 @Data
+@Entity
 public class User {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "name")
   private String name;
-  @Column(name = "cpf", unique = true)
+  @Column(name = "cpf", unique = true, nullable = false)
   private String cpf;
-  @Column(name = "email", unique = true)
+  @Column(name = "email", unique = true, nullable = false)
   private String email;
 
 
