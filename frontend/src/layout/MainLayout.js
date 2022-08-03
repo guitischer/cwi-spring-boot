@@ -9,7 +9,7 @@ function MainLayout({children}) {
           <section className="hero is-primary header">
           <div className="hero-body">
             <p className="title">
-              Desafio Técnico CWI
+              Desafio Técnico - Cooperativismo
             </p>
             <p className="subtitle">
               Spring Boot
