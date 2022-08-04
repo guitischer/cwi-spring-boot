@@ -1,0 +1,60 @@
+[{
+  "id": 1,
+  "name": "Pauta 1",
+  "description": "Lorem ipsum....",
+  "voting_sessions": 
+  [
+    {
+      "id": 1,
+      "time_limit": 1,
+      "upvotes": 5,
+      "downvotes": 8
+    },
+    {
+      "id": 2,
+      "time_limit": 5,
+      "upvotes": 2,
+      "downvotes": 84
+    }
+  ]
+},
+{
+  "id": 2,
+  "name": "Pauta 2",
+  "description": "Lorem ipsum....",
+  "voting_sessions": 
+  [
+    {
+      "id": 1,
+      "time_limit": 2,
+      "upvotes": 22,
+      "downvotes": 8
+    },
+    {
+      "id": 2,
+      "time_limit": 5,
+      "upvotes": 222,
+      "downvotes": 84
+    }
+  ]
+},
+{
+  "id": 3,
+  "name": "Pauta 3",
+  "description": "Lorem ipsum....",
+  "voting_sessions": 
+  [
+    {
+      "id": 1,
+      "time_limit": 11,
+      "upvotes": 52,
+      "downvotes": 82
+    },
+    {
+      "id": 2,
+      "time_limit": 8,
+      "upvotes": 42,
+      "downvotes": 36
+    }
+  ]
+}]
