@@ -18,51 +18,42 @@ import org.springframework.web.bind.annotation.RestController;
 import com.desafio.springboot.exceptions.ResourceNotFoundException;
 import com.desafio.springboot.models.User;
 import com.desafio.springboot.repositories.UserRepository;
+import com.desafio.springboot.services.UserService;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
   @Autowired
-  private UserRepository userRepository;
+  private UserService userService;
   
   @GetMapping
-  public List<User> getUsers() {
-    return userRepository.findAll();
+  public ResponseEntity<List<User>> list() {
+    List<User> users = userService.getUsers();
+    return ResponseEntity.ok(users);
   }
 
   @GetMapping("/{id}")
-  public User getUser(@PathVariable Long id) {
-    return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " +id+" não encontrado!"));
+  public ResponseEntity<User> get(@PathVariable Long id) {
+    User user = userService.getUser(id);
+    return ResponseEntity.ok(user);
   }
 
   @PostMapping
-  @ResponseStatus(code = HttpStatus.CREATED)
-  public User storeUser(@RequestBody User user){
-    return userRepository.save(user);
+  public ResponseEntity<User> save(@RequestBody User user){
+    userService.saveUser(user);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user){
-    User currentUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " +id+" não encontrado!"));
-
-    currentUser.setName(user.getName());
-    currentUser.setCpf(user.getCpf());
-    currentUser.setEmail(user.getEmail());
-
-    userRepository.save(currentUser);
-    
-    return ResponseEntity.ok(currentUser);
+  public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user){
+    userService.updateUser(id,user);
+    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Long> deleteUser(@PathVariable Long id) {
-    try {
-      userRepository.deleteById(id);
-      return ResponseEntity.ok(id);
-    } catch (Exception e) {
-      throw new ResourceNotFoundException("Usuário com id " +id+" não encontrado!");
-    }
-    
+  public ResponseEntity<Long> delete(@PathVariable Long id) {
+    userService.deleteUser(id);
+    return ResponseEntity.ok(id);
   }
 }
