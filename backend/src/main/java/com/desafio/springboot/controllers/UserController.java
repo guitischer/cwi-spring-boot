@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.desafio.springboot.exceptions.ResourceNotFoundException;
 import com.desafio.springboot.models.User;
-import com.desafio.springboot.repositories.UserRepository;
 import com.desafio.springboot.services.UserService;
 
 @RestController
