@@ -8,7 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
-@Table(name =  "users")
+
+@Table(name = "users")
 @Data
 @Entity
 public class User {
@@ -19,10 +20,11 @@ public class User {
 
   @Column(name = "name")
   private String name;
+
   @Column(name = "cpf", unique = true, nullable = false)
   private String cpf;
+
   @Column(name = "email", unique = true, nullable = false)
   private String email;
-
 
 }

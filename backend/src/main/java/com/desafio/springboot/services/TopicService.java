@@ -8,11 +8,11 @@ import com.desafio.springboot.repositories.TopicRepository;
 
 @Service
 public class TopicService {
-  
+
   @Autowired
   TopicRepository topicRepository;
 
-  public void createTopic(Topic topic){
+  public void createTopic(Topic topic) {
     topicRepository.save(topic);
   }
 }

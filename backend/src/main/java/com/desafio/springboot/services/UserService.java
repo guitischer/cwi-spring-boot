@@ -11,7 +11,7 @@ import com.desafio.springboot.repositories.UserRepository;
 
 @Service
 public class UserService {
-  
+
   @Autowired
   private UserRepository userRepository;
 
@@ -20,15 +20,17 @@ public class UserService {
   }
 
   public User getUser(Long id) {
-    return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " +id+" não encontrado!"));
+    return userRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado!"));
   }
 
-  public void saveUser(User user){
+  public void saveUser(User user) {
     userRepository.save(user);
   }
 
-  public void updateUser(Long id, User user){
-    User currentUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " +id+" não encontrado!"));
+  public void updateUser(Long id, User user) {
+    User currentUser = userRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado!"));
 
     currentUser.setName(user.getName());
     currentUser.setCpf(user.getCpf());
@@ -41,8 +43,8 @@ public class UserService {
     try {
       userRepository.deleteById(id);
     } catch (Exception e) {
-      throw new ResourceNotFoundException("Usuário com id " +id+" não encontrado!");
+      throw new ResourceNotFoundException("Usuário com id " + id + " não encontrado!");
     }
-    
+
   }
 }

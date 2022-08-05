@@ -8,7 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
-@Table(name =  "topics")
+
+@Table(name = "topics")
 @Data
 @Entity
 public class Topic {
@@ -21,5 +22,4 @@ public class Topic {
 
   @Column(name = "description")
   private String description;
-
 }

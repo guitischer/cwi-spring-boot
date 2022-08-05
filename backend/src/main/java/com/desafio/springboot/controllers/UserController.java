@@ -23,7 +23,7 @@ public class UserController {
 
   @Autowired
   private UserService userService;
-  
+
   @GetMapping
   public ResponseEntity<List<User>> list() {
     List<User> users = userService.getUsers();
@@ -37,14 +37,14 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<User> save(@RequestBody User user){
+  public ResponseEntity<User> save(@RequestBody User user) {
     userService.saveUser(user);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user){
-    userService.updateUser(id,user);
+  public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
+    userService.updateUser(id, user);
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 

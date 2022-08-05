@@ -17,9 +17,9 @@ public class TopicController {
 
   @Autowired
   TopicService topicService;
-  
+
   @PostMapping
-  public ResponseEntity<Topic> create(@RequestBody Topic topic){
+  public ResponseEntity<Topic> create(@RequestBody Topic topic) {
     topicService.createTopic(topic);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
