@@ -1,5 +1,6 @@
 # Desafio Técnico - Sistema de Votação
-## Objetivo
+## Sobre
+### Objetivo
 No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. 
 A partir disso, você precisa criar uma solução back-end para gerenciar essas sessões de votação.
 
@@ -16,3 +17,20 @@ pode ser considerada como autorizada. A escolha da linguagem, frameworks e bibli
 não infrinja direitos de uso).
 
 É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+
+### Diagrama do Banco de Dados
+
+![image](https://user-images.githubusercontent.com/15661024/183253448-1b14b3a0-27a3-4a4c-b4b9-9c27f4bb8aea.png)
+
+### Tecnologias
+
+#### Backend
+- Java 18
+- Spring Boot 2.7.2
+- Banco de dados H2
+
+## Deploy da Aplicação
+
+
+
+
