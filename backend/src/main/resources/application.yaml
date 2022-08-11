@@ -13,3 +13,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+feign:
+  cpf:
+    url: https://user-info.herokuapp.com/users
