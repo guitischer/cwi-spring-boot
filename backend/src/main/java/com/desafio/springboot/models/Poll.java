@@ -15,11 +15,15 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Table(name = "polls")
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Poll {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

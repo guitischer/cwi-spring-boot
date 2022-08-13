@@ -9,11 +9,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Table(name = "votes")
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Vote {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

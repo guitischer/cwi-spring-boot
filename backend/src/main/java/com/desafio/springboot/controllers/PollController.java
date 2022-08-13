@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.desafio.springboot.dtos.PollDTO;
 import com.desafio.springboot.models.Poll;
 import com.desafio.springboot.services.PollService;
 
@@ -28,8 +29,8 @@ public class PollController {
   }
 
   @PostMapping
-  public ResponseEntity<Poll> create(@RequestBody Poll poll) {
-    pollService.createPoll(poll);
+  public ResponseEntity<Poll> create(@RequestBody PollDTO pollDTO) {
+    pollService.createPoll(pollDTO);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }

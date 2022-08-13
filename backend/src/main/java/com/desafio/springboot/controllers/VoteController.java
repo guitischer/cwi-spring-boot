@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.desafio.springboot.dtos.VoteDTO;
 import com.desafio.springboot.models.Vote;
 import com.desafio.springboot.services.VoteService;
 
@@ -28,8 +29,8 @@ public class VoteController {
   }
 
   @PostMapping
-  public ResponseEntity<Vote> create(@RequestBody Vote vote) {
-    voteService.createVote(vote);
+  public ResponseEntity<Vote> create(@RequestBody VoteDTO voteDTO) {
+    voteService.createVote(voteDTO);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
