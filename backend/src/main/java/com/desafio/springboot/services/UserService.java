@@ -1,13 +1,14 @@
 package com.desafio.springboot.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.springboot.dtos.UserDTO;
+import com.desafio.springboot.exceptions.InvalidParameterException;
+import com.desafio.springboot.exceptions.MissingParameterException;
 import com.desafio.springboot.exceptions.ResourceNotFoundException;
 import com.desafio.springboot.models.User;
 import com.desafio.springboot.repositories.UserRepository;
@@ -30,6 +31,7 @@ public class UserService {
   public void saveUser(UserDTO userDTO) {
     var user = new User();
     BeanUtils.copyProperties(userDTO, user);
+    requiredFieldsValidation(user);
     userRepository.save(user);
   }
 
@@ -48,7 +50,22 @@ public class UserService {
     }
   }
 
-  public Optional<User> findById(Long id) {
-    return userRepository.findById(id);
+  private void requiredFieldsValidation(User user) {
+    if (user.getName() == null || user.getName().equals("")) {
+      throw new MissingParameterException("Campo 'Nome' é obrigatório!");
+    }
+
+    if (user.getCpf() == null || user.getCpf().equals("")) {
+      throw new MissingParameterException("Campo 'CPF' é obrigatório!");
+    }
+
+    if (user.getEmail() == null || user.getEmail().equals("")) {
+      throw new InvalidParameterException("Campo 'E-mail' é obrigatório!");
+    }
+
+    if (!user.getEmail().contains("@")) {
+      throw new MissingParameterException("E-mail inválido!");
+    }
+
   }
 }
