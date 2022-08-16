@@ -10,10 +10,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Table(name = "votes")
+@Builder
 @Data
 @Entity
 @AllArgsConstructor
