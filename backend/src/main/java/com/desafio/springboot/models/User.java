@@ -30,7 +30,4 @@ public class User {
   @Column(name = "cpf", unique = true, nullable = false)
   private String cpf;
 
-  @Column(name = "email", unique = true, nullable = false)
-  private String email;
-
 }

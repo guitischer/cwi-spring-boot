@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.springboot.dtos.UserDTO;
-import com.desafio.springboot.exceptions.InvalidParameterException;
 import com.desafio.springboot.exceptions.MissingParameterException;
 import com.desafio.springboot.exceptions.ResourceNotFoundException;
 import com.desafio.springboot.models.User;
@@ -59,14 +58,5 @@ public class UserService {
     if (user.getCpf() == null || user.getCpf().equals("")) {
       throw new MissingParameterException("Campo 'CPF' é obrigatório!");
     }
-
-    if (user.getEmail() == null || user.getEmail().equals("")) {
-      throw new MissingParameterException("Campo 'E-mail' é obrigatório!");
-    }
-
-    if (!user.getEmail().contains("@")) {
-      throw new InvalidParameterException("E-mail inválido!");
-    }
-
   }
 }
