@@ -39,6 +39,7 @@ public class UserService {
     User currentUser = userRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado!"));
     BeanUtils.copyProperties(userDTO, currentUser);
+    requiredFieldsValidation(currentUser);
     userRepository.save(currentUser);
   }
 
@@ -60,11 +61,11 @@ public class UserService {
     }
 
     if (user.getEmail() == null || user.getEmail().equals("")) {
-      throw new InvalidParameterException("Campo 'E-mail' é obrigatório!");
+      throw new MissingParameterException("Campo 'E-mail' é obrigatório!");
     }
 
     if (!user.getEmail().contains("@")) {
-      throw new MissingParameterException("E-mail inválido!");
+      throw new InvalidParameterException("E-mail inválido!");
     }
 
   }

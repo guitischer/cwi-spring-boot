@@ -40,9 +40,8 @@ public class UserServiceTest {
 
   @Test
   void getUsers_Success() {
-    User user1 = User.builder().name("Dummy 1").cpf("00000000001").email("dummy1@dummy1.com").build();
-
-    User user2 = User.builder().name("Dummy 2").cpf("00000000002").email("dummy2@dummy2.com").build();
+    User user1 = getUserAllArgs();
+    User user2 = getUserAllArgs();
 
     List<User> usersList = new ArrayList<>(Arrays.asList(user1, user2));
     Mockito.when(userRepository.findAll()).thenReturn(usersList);
@@ -55,15 +54,13 @@ public class UserServiceTest {
 
   @Test
   void getUser_Success() {
-    Long id = new Random().nextLong();
-
-    User userMock = User.builder().id(id).name("Dummy 1").cpf("00000000001").email("dummy1@dummy1.com").build();
+    User userMock = getUserAllArgs();
     Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
 
-    User user = userService.getUser(id);
-    Mockito.verify(userRepository).findById(id);
+    User user = userService.getUser(userMock.getId());
+    Mockito.verify(userRepository).findById(userMock.getId());
 
-    assert (user.getId() == id);
+    assert (user.getId() == userMock.getId());
   }
 
   @Test
@@ -72,7 +69,6 @@ public class UserServiceTest {
     BeanUtils.copyProperties(getUserAllArgs(), userDTO);
 
     userService.saveUser(userDTO);
-
     Mockito.verify(userRepository).save(any(User.class));
   }
 
@@ -84,33 +80,30 @@ public class UserServiceTest {
       userDTO.setName(null);
 
       userService.saveUser(userDTO);
-
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
   }
 
   @Test
   void saveUserWithoutEmail_Fail() {
-    Assertions.assertThrows(InvalidParameterException.class, () -> {
+    Assertions.assertThrows(MissingParameterException.class, () -> {
       UserDTO userDTO = new UserDTO();
       BeanUtils.copyProperties(getUserAllArgs(), userDTO);
       userDTO.setEmail(null);
 
       userService.saveUser(userDTO);
-
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
   }
 
   @Test
   void saveUserWithInvalidEmail_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    Assertions.assertThrows(InvalidParameterException.class, () -> {
       UserDTO userDTO = new UserDTO();
       BeanUtils.copyProperties(getUserAllArgs(), userDTO);
       userDTO.setEmail("dummy.dummy.com");
 
       userService.saveUser(userDTO);
-
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
   }
@@ -123,20 +116,115 @@ public class UserServiceTest {
       userDTO.setCpf(null);
 
       userService.saveUser(userDTO);
-
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
   }
 
-  // @Test
-  // void updateUser() {
+  @Test
+  void updateUserAllArgs_Success() {
+    User userMock = getUserAllArgs();
+    Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
 
-  // }
+    User user = userService.getUser(userMock.getId());
+    Mockito.verify(userRepository).findById(userMock.getId());
 
-  // @Test
-  // void deleteUser() {
+    UserDTO userDTO = new UserDTO();
+    BeanUtils.copyProperties(user, userDTO);
+    userDTO.setName("Dummy 2");
+    userDTO.setCpf("00000000002");
+    userDTO.setEmail("dummy2@dummy2.com");
 
-  // }
+    userService.updateUser(user.getId(), userDTO);
+    Mockito.verify(userRepository).save(any(User.class));
+  }
+
+  @Test
+  void updateUserWithNullName_Fail() {
+    Assertions.assertThrows(MissingParameterException.class, () -> {
+      User userMock = getUserAllArgs();
+      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
+
+      User user = userService.getUser(userMock.getId());
+      Mockito.verify(userRepository).findById(userMock.getId());
+
+      UserDTO userDTO = new UserDTO();
+      BeanUtils.copyProperties(user, userDTO);
+      userDTO.setName(null);
+      userDTO.setCpf("00000000002");
+      userDTO.setEmail("dummy2@dummy2.com");
+
+      userService.updateUser(user.getId(), userDTO);
+      Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
+    });
+  }
+
+  @Test
+  void updateUserWithNullCpf_Fail() {
+    Assertions.assertThrows(MissingParameterException.class, () -> {
+      User userMock = getUserAllArgs();
+      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
+
+      User user = userService.getUser(userMock.getId());
+      Mockito.verify(userRepository).findById(userMock.getId());
+
+      UserDTO userDTO = new UserDTO();
+      BeanUtils.copyProperties(user, userDTO);
+      userDTO.setName("Dummy 2");
+      userDTO.setCpf(null);
+      userDTO.setEmail("dummy2@dummy2.com");
+
+      userService.updateUser(user.getId(), userDTO);
+      Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
+    });
+  }
+
+  @Test
+  void updateUserWithNullEmail_Fail() {
+    Assertions.assertThrows(MissingParameterException.class, () -> {
+      User userMock = getUserAllArgs();
+      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
+
+      User user = userService.getUser(userMock.getId());
+      Mockito.verify(userRepository).findById(userMock.getId());
+
+      UserDTO userDTO = new UserDTO();
+      BeanUtils.copyProperties(user, userDTO);
+      userDTO.setName("Dummy 2");
+      userDTO.setCpf("00000000002");
+      userDTO.setEmail(null);
+
+      userService.updateUser(user.getId(), userDTO);
+      Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
+    });
+  }
+
+  @Test
+  void updateUserWithInvalidEmail_Fail() {
+    Assertions.assertThrows(InvalidParameterException.class, () -> {
+      User userMock = getUserAllArgs();
+      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
+
+      User user = userService.getUser(userMock.getId());
+      Mockito.verify(userRepository).findById(userMock.getId());
+
+      UserDTO userDTO = new UserDTO();
+      BeanUtils.copyProperties(user, userDTO);
+      userDTO.setName("Dummy 2");
+      userDTO.setCpf("00000000002");
+      userDTO.setEmail("dummy2.dummy2.com");
+
+      userService.updateUser(user.getId(), userDTO);
+      Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
+    });
+  }
+
+  @Test
+  void deleteUser_Success() {
+    User user = getUserAllArgs();
+
+    userService.deleteUser(user.getId());
+    Mockito.verify(userRepository).deleteById(any(Long.class));
+  }
 
   private static User getUserAllArgs() {
     return User
