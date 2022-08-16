@@ -16,10 +16,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Table(name = "polls")
+@Builder
 @Data
 @Entity
 @AllArgsConstructor

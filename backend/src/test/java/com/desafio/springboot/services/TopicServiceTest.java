@@ -58,6 +58,16 @@ public class TopicServiceTest {
   }
 
   @Test
+  void saveTopicWithoutDescription_Success() {
+    TopicDTO topicDTO = new TopicDTO();
+    BeanUtils.copyProperties(getTopicAllArgs(), topicDTO);
+    topicDTO.setDescription(null);
+
+    topicService.createTopic(topicDTO);
+    Mockito.verify(topicRepository).save(any(Topic.class));
+  }
+
+  @Test
   void saveTopicWithoutName_Fail() {
     Assertions.assertThrows(MissingParameterException.class, () -> {
       TopicDTO topicDTO = new TopicDTO();

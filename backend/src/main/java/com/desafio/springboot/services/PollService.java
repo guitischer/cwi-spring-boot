@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.springboot.dtos.PollDTO;
+import com.desafio.springboot.exceptions.MissingParameterException;
 import com.desafio.springboot.models.Poll;
 import com.desafio.springboot.repositories.PollRepository;
 
@@ -27,12 +28,20 @@ public class PollService {
     var poll = new Poll();
     BeanUtils.copyProperties(pollDTO, poll);
 
+    requiredTopicValidation(poll);
+
     if (poll.getEndAt() == null) {
       LocalDateTime today = LocalDateTime.now().plus(Duration.of(1, ChronoUnit.MINUTES));
       poll.setEndAt(today);
     }
 
     pollRepository.save(poll);
+  }
+
+  private void requiredTopicValidation(Poll poll) {
+    if (poll.getTopic() == null) {
+      throw new MissingParameterException("Campo 'Topic' é obrigatório!");
+    }
   }
 
 }
