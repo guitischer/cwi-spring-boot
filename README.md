@@ -25,7 +25,6 @@ não infrinja direitos de uso).
 
 ## Tecnologias
 
-#### Backend
 - [Java 18](https://www.oracle.com/java/technologies/javase/jdk18-archive-downloads.html)
 - [Spring Boot 2.7.2](https://spring.io/projects/spring-boot)
 - [Banco de dados H2](https://www.h2database.com/html/main.html)
