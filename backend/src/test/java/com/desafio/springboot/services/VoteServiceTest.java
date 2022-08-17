@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.desafio.springboot.dtos.VoteDTO;
+import com.desafio.springboot.enums.VoteEnum;
 import com.desafio.springboot.exceptions.MissingParameterException;
 import com.desafio.springboot.models.Poll;
 import com.desafio.springboot.models.Topic;
@@ -104,6 +105,6 @@ public class VoteServiceTest {
         .cpf("00000000001")
         .build();
 
-    return Vote.builder().id(new Random().nextLong()).vote(true).user(user).poll(poll).build();
+    return Vote.builder().id(new Random().nextLong()).vote(VoteEnum.YES).user(user).poll(poll).build();
   }
 }
