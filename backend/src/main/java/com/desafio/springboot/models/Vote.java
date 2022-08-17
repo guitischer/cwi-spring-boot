@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.desafio.springboot.enums.VoteEnum;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
 public class Vote {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
