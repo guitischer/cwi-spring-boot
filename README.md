@@ -1,4 +1,5 @@
 # Desafio Técnico - Sistema de Votação
+
 ## Sobre
 ### Objetivo
 No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. 
@@ -22,15 +23,19 @@ não infrinja direitos de uso).
 
 ![image](https://user-images.githubusercontent.com/15661024/183253448-1b14b3a0-27a3-4a4c-b4b9-9c27f4bb8aea.png)
 
-### Tecnologias
+## Tecnologias
 
 #### Backend
-- Java 18
-- Spring Boot 2.7.2
-- Banco de dados H2
+- [Java 18](https://www.oracle.com/java/technologies/javase/jdk18-archive-downloads.html)
+- [Spring Boot 2.7.2](https://spring.io/projects/spring-boot)
+- [Banco de dados H2](https://www.h2database.com/html/main.html)
 
 ## Deploy da Aplicação
 
 
+
+## Autor
+
+* **Guilherme Tischer Lopes** - [LinkedIn](https://www.linkedin.com/in/guilherme-tischer/)
 
 
