@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.springboot.dtos.PollDTO;
+import com.desafio.springboot.enums.ResultEnum;
+import com.desafio.springboot.enums.VoteEnum;
 import com.desafio.springboot.exceptions.MissingParameterException;
+import com.desafio.springboot.exceptions.ResourceNotFoundException;
 import com.desafio.springboot.models.Poll;
 import com.desafio.springboot.repositories.PollRepository;
 
@@ -36,6 +39,24 @@ public class PollService {
     }
 
     pollRepository.save(poll);
+  }
+
+  public ResultEnum getResult(Long pollId) {
+    Poll poll = pollRepository.findById(pollId)
+        .orElseThrow(() -> new ResourceNotFoundException("Sessão com id " + pollId + " não encontrada!"));
+    Long upvotes = poll.getVotes().stream().filter(vote -> vote.getVote().equals(VoteEnum.YES)).count();
+    Long downvotes = poll.getVotes().stream().filter(vote -> vote.getVote().equals(VoteEnum.NO)).count();
+    ResultEnum result;
+
+    if (upvotes > downvotes) {
+      result = ResultEnum.APPROVED;
+    } else if (upvotes < downvotes) {
+      result = ResultEnum.DISAPPROVED;
+    } else {
+      result = ResultEnum.TIE;
+    }
+
+    return result;
   }
 
   private void requiredTopicValidation(Poll poll) {
