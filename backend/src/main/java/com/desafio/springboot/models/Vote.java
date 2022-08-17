@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.desafio.springboot.enums.VoteEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +29,7 @@ public class Vote {
   private Long id;
 
   @Column(name = "vote", nullable = false)
-  private Boolean vote;
+  private VoteEnum vote;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
@@ -34,6 +37,7 @@ public class Vote {
 
   @ManyToOne
   @JoinColumn(name = "poll_id", nullable = false)
+  @JsonBackReference
   private Poll poll;
 
 }
