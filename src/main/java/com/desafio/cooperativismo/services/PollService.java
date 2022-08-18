@@ -44,7 +44,7 @@ public class PollService {
 
   public ResultEnum getResult(Long pollId) {
     Poll poll = pollRepository.findById(pollId)
-        .orElseThrow(() -> new ResourceNotFoundException("Sessão com id " + pollId + " não encontrada!"));
+        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.POLL_NOT_FOUND));
     Long upvotes = poll.getVotes().stream().filter(vote -> vote.getVote().equals(VoteEnum.YES)).count();
     Long downvotes = poll.getVotes().stream().filter(vote -> vote.getVote().equals(VoteEnum.NO)).count();
     ResultEnum result;

@@ -40,7 +40,7 @@ public class VoteService {
   private void checkIfUserIsAbleToVote(Long userId) {
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + userId + " não encontrado!"));
+        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.USER_NOT_FOUND));
     CPFResponse possibilityToVote = cpfClient.getStatus(user.getCpf());
 
     if (possibilityToVote == null) {

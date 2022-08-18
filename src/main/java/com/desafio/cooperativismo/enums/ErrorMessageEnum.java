@@ -11,7 +11,12 @@ public enum ErrorMessageEnum {
   REQUIRED_VOTE_FIELD("O campo Voto é obrigatório"),
   REQUIRED_USER_FIELD("O campo Usuário é obrigatório"),
   REQUIRED_POLL_FIELD("O campo Sessão de Votação é obrigatório"),
-  REQUIRED_TOPIC_FIELD("O campo Pauta é obrigatório");
+  REQUIRED_TOPIC_FIELD("O campo Pauta é obrigatório"),
+
+  USER_NOT_FOUND("O id do Usuário não foi encontrado"),
+  VOTE_NOT_FOUND("O id do Voto não foi encontrado"),
+  POLL_NOT_FOUND("O id da Sessão de Votação não foi encontrado"),
+  TOPIC_NOT_FOUND("O id da Pauta não foi encontrado");
 
   private String message;
 }

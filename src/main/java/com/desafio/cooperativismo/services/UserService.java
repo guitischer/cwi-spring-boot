@@ -25,7 +25,7 @@ public class UserService {
 
   public User getUser(Long id) {
     return userRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado!"));
+        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.USER_NOT_FOUND));
   }
 
   public void saveUser(UserDTO userDTO) {
@@ -37,7 +37,7 @@ public class UserService {
 
   public void updateUser(Long id, UserDTO userDTO) {
     User currentUser = userRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado!"));
+        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.USER_NOT_FOUND));
     BeanUtils.copyProperties(userDTO, currentUser);
     requiredFieldsValidation(currentUser);
     userRepository.save(currentUser);
@@ -47,7 +47,7 @@ public class UserService {
     try {
       userRepository.deleteById(id);
     } catch (Exception e) {
-      throw new ResourceNotFoundException("Usuário com id " + id + " não encontrado!");
+      throw new IllegalArgumentException(ErrorMessageEnum.USER_NOT_FOUND.getMessage());
     }
   }
 
