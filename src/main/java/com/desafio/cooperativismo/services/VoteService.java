@@ -44,9 +44,9 @@ public class VoteService {
     CPFResponse possibilityToVote = cpfClient.getStatus(user.getCpf());
 
     if (possibilityToVote == null) {
-      throw new ApiException("O CPF informado não é válido");
+      throw new ApiException(ErrorMessageEnum.INVALID_CPF);
     } else if (possibilityToVote.getStatus().equals(UserVoteEnum.UNABLE_TO_VOTE)) {
-      throw new ApiException("Esse usuário não pode votar");
+      throw new ApiException(ErrorMessageEnum.UNABLE_TO_VOTE);
     }
 
   }

@@ -16,7 +16,10 @@ public enum ErrorMessageEnum {
   USER_NOT_FOUND("O id do Usuário não foi encontrado"),
   VOTE_NOT_FOUND("O id do Voto não foi encontrado"),
   POLL_NOT_FOUND("O id da Sessão de Votação não foi encontrado"),
-  TOPIC_NOT_FOUND("O id da Pauta não foi encontrado");
+  TOPIC_NOT_FOUND("O id da Pauta não foi encontrado"),
+
+  INVALID_CPF("CPF inválido"),
+  UNABLE_TO_VOTE("Esse usuário já votou, portanto, não pode votar novamente");
 
   private String message;
 }
