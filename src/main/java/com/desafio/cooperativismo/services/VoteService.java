@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.desafio.cooperativismo.clients.CPFClient;
 import com.desafio.cooperativismo.dtos.VoteDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.enums.UserVoteEnum;
 import com.desafio.cooperativismo.exceptions.ApiException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
@@ -52,15 +53,15 @@ public class VoteService {
 
   private void requiredFieldsValidation(Vote vote) {
     if (vote.getVote() == null) {
-      throw new MissingParameterException("Campo 'Vote' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_VOTE_FIELD);
     }
 
     if (vote.getUser() == null) {
-      throw new MissingParameterException("Campo 'User' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_USER_FIELD);
     }
 
     if (vote.getPoll() == null) {
-      throw new MissingParameterException("Campo 'Poll' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_POLL_FIELD);
     }
   }
 }

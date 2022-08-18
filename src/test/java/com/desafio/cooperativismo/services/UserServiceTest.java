@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,15 +19,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.desafio.cooperativismo.dtos.UserDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.User;
 
 import com.desafio.cooperativismo.repositories.UserRepository;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class UserServiceTest {
@@ -73,7 +73,7 @@ public class UserServiceTest {
 
   @Test
   void saveUserWithoutName_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       UserDTO userDTO = new UserDTO();
       BeanUtils.copyProperties(getUserAllArgs(), userDTO);
       userDTO.setName(null);
@@ -81,11 +81,13 @@ public class UserServiceTest {
       userService.saveUser(userDTO);
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_NAME_FIELD.getMessage()));
   }
 
   @Test
   void saveUserWithoutCpf_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       UserDTO userDTO = new UserDTO();
       BeanUtils.copyProperties(getUserAllArgs(), userDTO);
       userDTO.setCpf(null);
@@ -93,6 +95,8 @@ public class UserServiceTest {
       userService.saveUser(userDTO);
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_CPF_FIELD.getMessage()));
   }
 
   @Test
@@ -114,7 +118,7 @@ public class UserServiceTest {
 
   @Test
   void updateUserWithNullName_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       User userMock = getUserAllArgs();
       Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
 
@@ -129,11 +133,13 @@ public class UserServiceTest {
       userService.updateUser(user.getId(), userDTO);
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_NAME_FIELD.getMessage()));
   }
 
   @Test
   void updateUserWithNullCpf_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       User userMock = getUserAllArgs();
       Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userMock));
 
@@ -148,6 +154,8 @@ public class UserServiceTest {
       userService.updateUser(user.getId(), userDTO);
       Mockito.verify(userRepository, Mockito.never()).save(any(User.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_CPF_FIELD.getMessage()));
   }
 
   @Test

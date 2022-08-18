@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.cooperativismo.dtos.UserDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
 import com.desafio.cooperativismo.models.User;
@@ -52,11 +53,11 @@ public class UserService {
 
   private void requiredFieldsValidation(User user) {
     if (user.getName() == null || user.getName().equals("")) {
-      throw new MissingParameterException("Campo 'Nome' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_NAME_FIELD);
     }
 
     if (user.getCpf() == null || user.getCpf().equals("")) {
-      throw new MissingParameterException("Campo 'CPF' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_CPF_FIELD);
     }
   }
 }

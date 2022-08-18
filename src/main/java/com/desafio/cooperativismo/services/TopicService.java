@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.cooperativismo.dtos.TopicDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.repositories.TopicRepository;
@@ -30,7 +31,7 @@ public class TopicService {
 
   public void requiredNameValidation(Topic topic) {
     if (topic.getName() == null || topic.getName().equals("")) {
-      throw new MissingParameterException("Campo 'Nome' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_NAME_FIELD);
     }
   }
 }

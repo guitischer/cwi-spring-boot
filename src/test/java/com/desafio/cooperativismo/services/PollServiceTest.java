@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,15 +22,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.repositories.PollRepository;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class PollServiceTest {
@@ -75,7 +75,7 @@ public class PollServiceTest {
 
   @Test
   void savePollWithoutTopic_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       PollDTO pollDTO = new PollDTO();
       BeanUtils.copyProperties(getPollAllArgs(), pollDTO);
       pollDTO.setTopic(null);
@@ -83,6 +83,8 @@ public class PollServiceTest {
       pollService.createPoll(pollDTO);
       Mockito.verify(pollRepository, Mockito.never()).save(any(Poll.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_TOPIC_FIELD.getMessage()));
   }
 
   private static Poll getPollAllArgs() {

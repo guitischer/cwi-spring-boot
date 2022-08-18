@@ -3,11 +3,14 @@ package com.desafio.cooperativismo.services;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.Random;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,18 +19,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.test.context.SpringBootTest;
 
+import com.desafio.cooperativismo.clients.CPFClient;
 import com.desafio.cooperativismo.dtos.VoteDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
+import com.desafio.cooperativismo.enums.UserVoteEnum;
 import com.desafio.cooperativismo.enums.VoteEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.models.User;
 import com.desafio.cooperativismo.models.Vote;
+import com.desafio.cooperativismo.repositories.UserRepository;
 import com.desafio.cooperativismo.repositories.VoteRepository;
+import com.desafio.cooperativismo.responses.CPFResponse;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class VoteServiceTest {
@@ -38,18 +44,31 @@ public class VoteServiceTest {
   @Mock
   VoteRepository voteRepository;
 
+  @Mock
+  UserRepository userRepository;
+
+  @Mock
+  CPFClient cpfClient;
+
   @Test
   void saveVoteAllArgs_Success() {
     VoteDTO voteDTO = new VoteDTO();
     BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
 
+    User user = voteDTO.getUser();
+    Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+
+    CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE).build();
+    Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+
     voteService.createVote(voteDTO);
+
     Mockito.verify(voteRepository).save(any(Vote.class));
   }
 
   @Test
   void saveVoteWithoutVoteField_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       VoteDTO voteDTO = new VoteDTO();
       BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
       voteDTO.setVote(null);
@@ -57,11 +76,13 @@ public class VoteServiceTest {
       voteService.createVote(voteDTO);
       Mockito.verify(voteRepository).save(any(Vote.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_VOTE_FIELD.getMessage()));
   }
 
   @Test
   void saveVoteWithoutUser_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       VoteDTO voteDTO = new VoteDTO();
       BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
       voteDTO.setUser(null);
@@ -69,11 +90,13 @@ public class VoteServiceTest {
       voteService.createVote(voteDTO);
       Mockito.verify(voteRepository).save(any(Vote.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_USER_FIELD.getMessage()));
   }
 
   @Test
   void saveVoteWithoutPoll_Fail() {
-    Assertions.assertThrows(MissingParameterException.class, () -> {
+    MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
       VoteDTO voteDTO = new VoteDTO();
       BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
       voteDTO.setPoll(null);
@@ -81,6 +104,8 @@ public class VoteServiceTest {
       voteService.createVote(voteDTO);
       Mockito.verify(voteRepository).save(any(Vote.class));
     });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_POLL_FIELD.getMessage()));
   }
 
   private static Vote getVoteAllArgs() {

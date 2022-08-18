@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
+import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.enums.ResultEnum;
 import com.desafio.cooperativismo.enums.VoteEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
@@ -61,7 +62,7 @@ public class PollService {
 
   private void requiredTopicValidation(Poll poll) {
     if (poll.getTopic() == null) {
-      throw new MissingParameterException("Campo 'Topic' é obrigatório!");
+      throw new MissingParameterException(ErrorMessageEnum.REQUIRED_TOPIC_FIELD);
     }
   }
 
