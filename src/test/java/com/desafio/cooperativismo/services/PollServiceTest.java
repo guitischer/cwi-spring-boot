@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.junit.jupiter.api.Assertions;
@@ -25,10 +26,12 @@ import org.springframework.beans.BeanUtils;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
+import com.desafio.cooperativismo.exceptions.ApiException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.repositories.PollRepository;
+import com.desafio.cooperativismo.repositories.TopicRepository;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -39,6 +42,9 @@ public class PollServiceTest {
 
   @Mock
   PollRepository pollRepository;
+
+  @Mock
+  TopicRepository topicRepository;
 
   @Test
   void getPolls_Success() {
@@ -59,6 +65,9 @@ public class PollServiceTest {
     PollDTO pollDTO = new PollDTO();
     BeanUtils.copyProperties(getPollAllArgs(), pollDTO);
 
+    Topic topic = pollDTO.getTopic();
+    Mockito.when(topicRepository.findById(any(Long.class))).thenReturn(Optional.of(topic));
+
     pollService.createPoll(pollDTO);
     Mockito.verify(pollRepository).save(any(Poll.class));
   }
@@ -68,6 +77,9 @@ public class PollServiceTest {
     PollDTO pollDTO = new PollDTO();
     BeanUtils.copyProperties(getPollAllArgs(), pollDTO);
     pollDTO.setEndAt(null);
+
+    Topic topic = pollDTO.getTopic();
+    Mockito.when(topicRepository.findById(any(Long.class))).thenReturn(Optional.of(topic));
 
     pollService.createPoll(pollDTO);
     Mockito.verify(pollRepository).save(any(Poll.class));
