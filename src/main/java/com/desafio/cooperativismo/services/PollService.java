@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,18 @@ import com.desafio.cooperativismo.enums.VoteEnum;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
 import com.desafio.cooperativismo.models.Poll;
+import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.repositories.PollRepository;
+import com.desafio.cooperativismo.repositories.TopicRepository;
 
 @Service
 public class PollService {
 
   @Autowired
   PollRepository pollRepository;
+
+  @Autowired
+  TopicRepository topicRepository;
 
   public List<Poll> getPolls() {
     return pollRepository.findAll();
@@ -33,6 +39,7 @@ public class PollService {
     BeanUtils.copyProperties(pollDTO, poll);
 
     requiredTopicValidation(poll);
+    checkIfTopicExists(pollDTO.getTopic().getId());
 
     if (poll.getEndAt() == null) {
       LocalDateTime today = LocalDateTime.now().plus(Duration.of(1, ChronoUnit.MINUTES));
@@ -58,6 +65,13 @@ public class PollService {
     }
 
     return result;
+  }
+
+  private void checkIfTopicExists(Long topicId) {
+    Optional<Topic> topic = topicRepository.findById(topicId);
+    if (!topic.isPresent()) {
+      throw new ResourceNotFoundException(ErrorMessageEnum.TOPIC_NOT_FOUND);
+    }
   }
 
   private void requiredTopicValidation(Poll poll) {

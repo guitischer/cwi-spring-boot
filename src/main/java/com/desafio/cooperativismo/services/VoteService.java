@@ -1,5 +1,7 @@
 package com.desafio.cooperativismo.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,10 +11,13 @@ import com.desafio.cooperativismo.dtos.VoteDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.enums.UserVoteEnum;
 import com.desafio.cooperativismo.exceptions.ApiException;
+import com.desafio.cooperativismo.exceptions.DuplicateRecordException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
+import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.User;
 import com.desafio.cooperativismo.models.Vote;
+import com.desafio.cooperativismo.repositories.PollRepository;
 import com.desafio.cooperativismo.repositories.UserRepository;
 import com.desafio.cooperativismo.repositories.VoteRepository;
 import com.desafio.cooperativismo.responses.CPFResponse;
@@ -27,25 +32,50 @@ public class VoteService {
   UserRepository userRepository;
 
   @Autowired
+  PollRepository pollRepository;
+
+  @Autowired
   CPFClient cpfClient;
 
   public void createVote(VoteDTO voteDTO) {
     var vote = new Vote();
     BeanUtils.copyProperties(voteDTO, vote);
     requiredFieldsValidation(vote);
-    checkIfUserIsAbleToVote(voteDTO.getUser().getId());
+
+    // TODO: checkIfPollIsOpened();
+
+    User user = checkIfUserExists(voteDTO.getUser().getId());
+    Poll poll = checkIfPollExists(voteDTO.getPoll().getId());
+
+    checkIfUserHaveAlreadyVoted(user, poll);
+    checkIfUserIsAbleToVote(user);
+
     voteRepository.save(vote);
   }
 
-  private void checkIfUserIsAbleToVote(Long userId) {
-
-    User user = userRepository.findById(userId)
+  private User checkIfUserExists(Long userId) {
+    return userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.USER_NOT_FOUND));
+  }
+
+  private Poll checkIfPollExists(Long pollId) {
+    return pollRepository.findById(pollId)
+        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.POLL_NOT_FOUND));
+  }
+
+  private void checkIfUserHaveAlreadyVoted(User user, Poll poll) {
+    Optional<Vote> userVote = voteRepository.findOneByUserAndPoll(user, poll);
+    if (userVote.isPresent()) {
+      throw new DuplicateRecordException(ErrorMessageEnum.USER_HAVE_ALREADY_VOTED);
+    }
+  }
+
+  private void checkIfUserIsAbleToVote(User user) {
     CPFResponse possibilityToVote = cpfClient.getStatus(user.getCpf());
 
     if (possibilityToVote == null) {
-      throw new ApiException(ErrorMessageEnum.INVALID_CPF);
-    } else if (possibilityToVote.getStatus().equals(UserVoteEnum.UNABLE_TO_VOTE)) {
+      throw new ResourceNotFoundException(ErrorMessageEnum.INVALID_CPF);
+    } else if (possibilityToVote.getStatus().equals(UserVoteEnum.UNABLE_TO_VOTE.getResponse())) {
       throw new ApiException(ErrorMessageEnum.UNABLE_TO_VOTE);
     }
 
