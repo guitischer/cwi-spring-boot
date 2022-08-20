@@ -17,19 +17,25 @@ import com.desafio.cooperativismo.dtos.TopicDTO;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.services.TopicService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/topics")
+@Api(value = "Endpoints de Pautas")
 public class TopicController {
 
   @Autowired
   TopicService topicService;
 
+  @ApiOperation(value = "Listagem das pautas")
   @GetMapping
   public ResponseEntity<List<Topic>> list() {
     List<Topic> topics = topicService.getTopics();
     return ResponseEntity.ok(topics);
   }
 
+  @ApiOperation(value = "Criação de pauta")
   @PostMapping
   public ResponseEntity<Topic> create(@RequestBody @Valid TopicDTO topicDTO) {
     topicService.createTopic(topicDTO);

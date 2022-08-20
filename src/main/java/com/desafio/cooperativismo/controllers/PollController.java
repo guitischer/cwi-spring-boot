@@ -18,31 +18,39 @@ import com.desafio.cooperativismo.enums.ResultEnum;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.services.PollService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/polls")
+@Api(value = "Endpoints de Sessão de Votação")
 public class PollController {
 
   @Autowired
   PollService pollService;
 
+  @ApiOperation(value = "Listagem das sessões de votação")
   @GetMapping
   public ResponseEntity<List<Poll>> list() {
     List<Poll> polls = pollService.getPolls();
     return ResponseEntity.ok(polls);
   }
 
+  @ApiOperation(value = "Criação de sessão de votação")
   @PostMapping
   public ResponseEntity<Poll> create(@RequestBody PollDTO pollDTO) {
     pollService.createPoll(pollDTO);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
+  @ApiOperation(value = "Exibir resultado da sessão de votação")
   @GetMapping("/{pollId}/result")
   public ResponseEntity<ResultEnum> result(@PathVariable Long pollId) {
     ResultEnum result = pollService.getResult(pollId);
     return ResponseEntity.ok(result);
   }
 
+  @ApiOperation(value = "Exibir status da sessão de votação")
   @GetMapping("/{pollId}/status")
   public ResponseEntity<PollStatusEnum> status(@PathVariable Long pollId) {
     PollStatusEnum status = pollService.getStatus(pollId);
