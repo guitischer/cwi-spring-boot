@@ -25,10 +25,12 @@ import org.springframework.beans.BeanUtils;
 import com.desafio.cooperativismo.clients.CPFClient;
 import com.desafio.cooperativismo.dtos.VoteDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
+import com.desafio.cooperativismo.enums.PollStatusEnum;
 import com.desafio.cooperativismo.enums.UserVoteEnum;
 import com.desafio.cooperativismo.enums.VoteEnum;
 import com.desafio.cooperativismo.exceptions.DuplicateRecordException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
+import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.models.User;
@@ -55,6 +57,9 @@ public class VoteServiceTest {
   PollRepository pollRepository;
 
   @Mock
+  PollService pollService;
+
+  @Mock
   CPFClient cpfClient;
 
   @Test
@@ -71,6 +76,8 @@ public class VoteServiceTest {
 
     Poll poll = voteDTO.getPoll();
     Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+
+    Mockito.when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
 
     voteService.createVote(voteDTO);
 
@@ -106,6 +113,8 @@ public class VoteServiceTest {
 
       Poll poll = voteDTO.getPoll();
       Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+
+      Mockito.when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
 
       voteService.createVote(voteDTO);
       Mockito.when(voteRepository.findOneByUserAndPoll(user, poll)).thenReturn(Optional.of(getVoteAllArgs()));
@@ -145,6 +154,44 @@ public class VoteServiceTest {
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_POLL_FIELD.getMessage()));
+  }
+
+  @Test
+  void saveVoteWithNonExistentPoll_Fail() {
+    ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+      VoteDTO voteDTO = new VoteDTO();
+      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+
+      User user = voteDTO.getUser();
+      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+
+      CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE.getResponse())
+          .build();
+      Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+
+      Mockito.when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
+
+      voteService.createVote(voteDTO);
+      Mockito.verify(voteRepository).save(any(Vote.class));
+    });
+
+    assertTrue(exception.getMessage().equals(ErrorMessageEnum.POLL_NOT_FOUND.getMessage()));
+  }
+
+  @Test
+  void saveVoteWithNonExistentUser_Fail() {
+    ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+      VoteDTO voteDTO = new VoteDTO();
+      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+
+      Poll poll = voteDTO.getPoll();
+      Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+
+      voteService.createVote(voteDTO);
+      Mockito.verify(voteRepository).save(any(Vote.class));
+    });
+
+    assertTrue(exception.getMessage().equals(ErrorMessageEnum.USER_NOT_FOUND.getMessage()));
   }
 
   private static Vote getVoteAllArgs() {

@@ -26,7 +26,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
-import com.desafio.cooperativismo.exceptions.ApiException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.Topic;
