@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.desafio.cooperativismo.clients.CPFClient;
 import com.desafio.cooperativismo.dtos.VoteDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
+import com.desafio.cooperativismo.enums.PollStatusEnum;
 import com.desafio.cooperativismo.enums.UserVoteEnum;
 import com.desafio.cooperativismo.exceptions.ApiException;
 import com.desafio.cooperativismo.exceptions.DuplicateRecordException;
@@ -35,6 +36,9 @@ public class VoteService {
   PollRepository pollRepository;
 
   @Autowired
+  PollService pollService;
+
+  @Autowired
   CPFClient cpfClient;
 
   public void createVote(VoteDTO voteDTO) {
@@ -42,10 +46,10 @@ public class VoteService {
     BeanUtils.copyProperties(voteDTO, vote);
     requiredFieldsValidation(vote);
 
-    // TODO: checkIfPollIsOpened();
-
     User user = checkIfUserExists(voteDTO.getUser().getId());
     Poll poll = checkIfPollExists(voteDTO.getPoll().getId());
+
+    checkIfPollIsOpened(poll);
 
     checkIfUserHaveAlreadyVoted(user, poll);
     checkIfUserIsAbleToVote(user);
@@ -61,6 +65,14 @@ public class VoteService {
   private Poll checkIfPollExists(Long pollId) {
     return pollRepository.findById(pollId)
         .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.POLL_NOT_FOUND));
+  }
+
+  private void checkIfPollIsOpened(Poll poll) {
+    PollStatusEnum pollStatus = pollService.getStatus(poll.getId());
+
+    if (pollStatus.equals(PollStatusEnum.POLL_CLOSED)) {
+      throw new ApiException(ErrorMessageEnum.POLL_CLOSED);
+    }
   }
 
   private void checkIfUserHaveAlreadyVoted(User user, Poll poll) {
