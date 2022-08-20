@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.desafio.cooperativismo.dtos.UserDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
+import com.desafio.cooperativismo.exceptions.InvalidParameterException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
 import com.desafio.cooperativismo.models.User;
@@ -31,7 +32,10 @@ public class UserService {
   public void saveUser(UserDTO userDTO) {
     var user = new User();
     BeanUtils.copyProperties(userDTO, user);
+
     requiredFieldsValidation(user);
+    checkIfThereIsUserWithSameCPF(user.getCpf());
+
     userRepository.save(user);
   }
 
@@ -48,6 +52,14 @@ public class UserService {
       userRepository.deleteById(id);
     } catch (Exception e) {
       throw new IllegalArgumentException(ErrorMessageEnum.USER_NOT_FOUND.getMessage());
+    }
+  }
+
+  private void checkIfThereIsUserWithSameCPF(String cpf) {
+    List<User> users = userRepository.findByCpf(cpf);
+
+    if (users.size() > 0) {
+      throw new InvalidParameterException(ErrorMessageEnum.CPF_IN_USE.getMessage());
     }
   }
 
