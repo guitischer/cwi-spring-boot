@@ -19,7 +19,11 @@ public enum ErrorMessageEnum {
   TOPIC_NOT_FOUND("O id da Pauta não foi encontrado"),
 
   INVALID_CPF("CPF inválido"),
-  UNABLE_TO_VOTE("Esse usuário já votou, portanto, não pode votar novamente");
+  UNABLE_TO_VOTE("Esse usuário já votou, portanto, não pode votar novamente"),
+
+  USER_HAVE_ALREADY_VOTED("Esse usuário já votou nessa sessão de votação"),
+
+  POLL_CLOSED("Essa sessão de votação já terminou");
 
   private String message;
 }

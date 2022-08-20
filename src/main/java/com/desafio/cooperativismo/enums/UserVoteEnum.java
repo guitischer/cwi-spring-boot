@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UserVoteEnum {
-  ABLE_TO_VOTE("Able to vote"),
-  UNABLE_TO_VOTE("Unable to vote");
+  ABLE_TO_VOTE("ABLE_TO_VOTE"),
+  UNABLE_TO_VOTE("UNABLE_TO_VOTE");
 
-  private String possibilityToVote;
+  private String response;
 }
