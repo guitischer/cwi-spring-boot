@@ -12,8 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
+import com.desafio.cooperativismo.enums.PollStatusEnum;
 import com.desafio.cooperativismo.enums.ResultEnum;
 import com.desafio.cooperativismo.enums.VoteEnum;
+import com.desafio.cooperativismo.exceptions.ApiException;
+import com.desafio.cooperativismo.exceptions.InvalidParameterException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
 import com.desafio.cooperativismo.models.Poll;
@@ -40,6 +43,8 @@ public class PollService {
 
     requiredTopicValidation(poll);
     checkIfTopicExists(pollDTO.getTopic().getId());
+    validateTopicRelationship(pollDTO.getTopic());
+    checkIfPollEndIsNotInThePast(poll);
 
     if (poll.getEndAt() == null) {
       LocalDateTime today = LocalDateTime.now().plus(Duration.of(1, ChronoUnit.MINUTES));
@@ -67,6 +72,23 @@ public class PollService {
     return result;
   }
 
+  public PollStatusEnum getStatus(Long pollId) {
+    Poll poll = pollRepository.findById(pollId)
+        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.POLL_NOT_FOUND));
+
+    if (LocalDateTime.now().isAfter(poll.getEndAt())) {
+      return PollStatusEnum.POLL_CLOSED;
+    }
+
+    return PollStatusEnum.POLL_OPENED;
+  }
+
+  private void checkIfPollEndIsNotInThePast(Poll poll) {
+    if (poll.getEndAt() != null && poll.getEndAt().isBefore(LocalDateTime.now())) {
+      throw new InvalidParameterException(ErrorMessageEnum.POLL_IN_PAST.getMessage());
+    }
+  }
+
   private void checkIfTopicExists(Long topicId) {
     Optional<Topic> topic = topicRepository.findById(topicId);
     if (!topic.isPresent()) {
@@ -80,4 +102,10 @@ public class PollService {
     }
   }
 
+  private void validateTopicRelationship(Topic topic) {
+    List<Poll> polls = pollRepository.findAllOpenedPollsByTopic(topic, LocalDateTime.now());
+    if (polls.size() > 0) {
+      throw new ApiException(ErrorMessageEnum.POLL_WITH_TOPIC_ALREADY_RUNNING);
+    }
+  }
 }

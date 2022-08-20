@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
+import com.desafio.cooperativismo.enums.PollStatusEnum;
 import com.desafio.cooperativismo.enums.ResultEnum;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.services.PollService;
@@ -41,4 +42,11 @@ public class PollController {
     ResultEnum result = pollService.getResult(pollId);
     return ResponseEntity.ok(result);
   }
+
+  @GetMapping("/{pollId}/status")
+  public ResponseEntity<PollStatusEnum> status(@PathVariable Long pollId) {
+    PollStatusEnum status = pollService.getStatus(pollId);
+    return ResponseEntity.ok(status);
+  }
+
 }

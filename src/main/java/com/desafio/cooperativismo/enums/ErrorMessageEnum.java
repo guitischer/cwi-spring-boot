@@ -23,7 +23,9 @@ public enum ErrorMessageEnum {
 
   USER_HAVE_ALREADY_VOTED("Esse usuário já votou nessa sessão de votação"),
 
-  POLL_CLOSED("Essa sessão de votação já terminou");
+  POLL_CLOSED("Essa sessão de votação já terminou"),
+  POLL_IN_PAST("A data de término da sessão de votação está no passado"),
+  POLL_WITH_TOPIC_ALREADY_RUNNING("Já existe uma sessão de votação com essa pauta em andamento");
 
   private String message;
 }
