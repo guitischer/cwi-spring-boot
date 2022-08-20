@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,11 +27,13 @@ import com.desafio.cooperativismo.dtos.VoteDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.enums.UserVoteEnum;
 import com.desafio.cooperativismo.enums.VoteEnum;
+import com.desafio.cooperativismo.exceptions.DuplicateRecordException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.models.Poll;
 import com.desafio.cooperativismo.models.Topic;
 import com.desafio.cooperativismo.models.User;
 import com.desafio.cooperativismo.models.Vote;
+import com.desafio.cooperativismo.repositories.PollRepository;
 import com.desafio.cooperativismo.repositories.UserRepository;
 import com.desafio.cooperativismo.repositories.VoteRepository;
 import com.desafio.cooperativismo.responses.CPFResponse;
@@ -48,6 +52,9 @@ public class VoteServiceTest {
   UserRepository userRepository;
 
   @Mock
+  PollRepository pollRepository;
+
+  @Mock
   CPFClient cpfClient;
 
   @Test
@@ -58,8 +65,12 @@ public class VoteServiceTest {
     User user = voteDTO.getUser();
     Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
 
-    CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE).build();
+    CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE.getResponse())
+        .build();
     Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+
+    Poll poll = voteDTO.getPoll();
+    Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
 
     voteService.createVote(voteDTO);
 
@@ -78,6 +89,34 @@ public class VoteServiceTest {
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_VOTE_FIELD.getMessage()));
+  }
+
+  @Test
+  void saveVoteOfSameUser_Fail() {
+    DuplicateRecordException exception = Assertions.assertThrows(DuplicateRecordException.class, () -> {
+      VoteDTO voteDTO = new VoteDTO();
+      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+
+      User user = voteDTO.getUser();
+      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+
+      CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE.getResponse())
+          .build();
+      Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+
+      Poll poll = voteDTO.getPoll();
+      Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+
+      voteService.createVote(voteDTO);
+      Mockito.when(voteRepository.findOneByUserAndPoll(user, poll)).thenReturn(Optional.of(getVoteAllArgs()));
+      Mockito.when(voteRepository.save(any(Vote.class))).thenReturn(getVoteAllArgs());
+
+      voteService.createVote(voteDTO);
+      Mockito.verify(voteRepository, times(2)).save(any(Vote.class));
+
+    });
+
+    assertTrue(exception.getMessage().contains(ErrorMessageEnum.USER_HAVE_ALREADY_VOTED.getMessage()));
   }
 
   @Test
@@ -132,4 +171,5 @@ public class VoteServiceTest {
 
     return Vote.builder().id(new Random().nextLong()).vote(VoteEnum.YES).user(user).poll(poll).build();
   }
+
 }
