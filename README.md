@@ -44,32 +44,27 @@ não infrinja direitos de uso).
 1. Clone o repositório
    
     ```
-
     $ https://github.com/guitischer/desafio-cooperativismo.git
     ```
 2. Acesse a pasta do repositório clonado
    
     ```
-
     $ cd desafio-cooperativismo
     ```
 3. Faça o build da aplicação usando o Maven
    
     ```
-
     $ .\mvnw install -DskipTests
     ```
 4. Faça o build da imagem usando o Docker
    
     ```
-
     $ docker build -t desafio-cooperativismo.jar .
     ```
 
 5. Inicialize a API e o banco de dados PostgreSQL usando o Docker Compose
    
     ```
-
     $ docker-compose up -d
     ```
 
