@@ -44,7 +44,7 @@ não infrinja direitos de uso).
 1. Clone o repositório
    
     ```
-    $ https://github.com/guitischer/desafio-cooperativismo.git
+    $ git clone https://github.com/guitischer/desafio-cooperativismo.git
     ```
 2. Acesse a pasta do repositório clonado
    
@@ -62,12 +62,22 @@ não infrinja direitos de uso).
     $ docker build -t desafio-cooperativismo.jar .
     ```
 
-5. Inicialize a API e o banco de dados PostgreSQL usando o Docker Compose
+5. Inicialize os containers da API e do banco de dados PostgreSQL usando o Docker Compose
    
     ```
     $ docker-compose up -d
     ```
 
+Para executar os testes unitários execute:
+
+   ```
+   .\mvnw test
+   ```
+Para parar todos os serviços/containers execute:
+
+   ```
+   $ docker-compose down
+   ```
 
 ## Autor
 
