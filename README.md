@@ -21,7 +21,7 @@ não infrinja direitos de uso).
 
 ### Diagrama do Banco de Dados
 
-![image](https://user-images.githubusercontent.com/15661024/183253448-1b14b3a0-27a3-4a4c-b4b9-9c27f4bb8aea.png)
+![image](https://user-images.githubusercontent.com/15661024/185799303-c2406ce0-e2a5-41a4-b5c4-f35d43e8681f.png)
 
 ## Tecnologias
 
