@@ -27,12 +27,33 @@ não infrinja direitos de uso).
 
 - [Java 18](https://www.oracle.com/java/technologies/javase/jdk18-archive-downloads.html)
 - [Spring Boot 2.7.2](https://spring.io/projects/spring-boot)
-- [Banco de dados H2](https://www.h2database.com/html/main.html)
+- [PostgreSQL](https://www.postgresql.org/)
 
 ## Deploy da Aplicação
 
+### Requisitos
 
+- [JDK 18](https://www.oracle.com/java/technologies/javase/jdk18-archive-downloads.html)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Maven](https://maven.apache.org/download.cgi)
+- [Git](https://git-scm.com/)
 
+### Deploy via Docker
+
+1. Clone o repositório
+  ```
+	$ https://github.com/guitischer/desafio-cooperativismo.git
+	```
+2. Acesse a pasta do repositório clonado
+  ```
+	$ cd desafio-cooperativismo
+	```
+3. Faça o build da aplicação com o Maven
+  ```
+	$ mvn install -DskipTests
+	```
+4.
 ## Autor
 
 * **Guilherme Tischer Lopes** - [LinkedIn](https://www.linkedin.com/in/guilherme-tischer/)
