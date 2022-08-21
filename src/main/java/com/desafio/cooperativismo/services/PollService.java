@@ -15,7 +15,6 @@ import com.desafio.cooperativismo.enums.ErrorMessageEnum;
 import com.desafio.cooperativismo.enums.PollStatusEnum;
 import com.desafio.cooperativismo.enums.ResultEnum;
 import com.desafio.cooperativismo.enums.VoteEnum;
-import com.desafio.cooperativismo.exceptions.ApiException;
 import com.desafio.cooperativismo.exceptions.InvalidParameterException;
 import com.desafio.cooperativismo.exceptions.MissingParameterException;
 import com.desafio.cooperativismo.exceptions.ResourceNotFoundException;
@@ -33,10 +32,26 @@ public class PollService {
   @Autowired
   TopicRepository topicRepository;
 
+  /**
+   * Método que retorna todas as sessões de votação
+   * 
+   * @return List<Poll> lista com as sessões de votação (Poll)
+   */
   public List<Poll> getPolls() {
     return pollRepository.findAll();
   }
 
+  /**
+   * Método para realizar a criação da sessão de votação (Poll)
+   * 
+   * @param pollDTO DTO (Data Transfer Object) da sessão de votação (Poll).
+   * 
+   * @throws MissingParameterException caso algum parâmetro obrigatório não seja
+   *                                   enviado pelo DTO
+   * @throws ResourceNotFoundException caso a pauta (Topic) não exista
+   * @throws InvalidParameterException caso alguma regra de negócio não cumpra com
+   *                                   o que deveria
+   */
   public void createPoll(PollDTO pollDTO) {
     var poll = new Poll();
     BeanUtils.copyProperties(pollDTO, poll);
@@ -54,6 +69,15 @@ public class PollService {
     pollRepository.save(poll);
   }
 
+  /**
+   * Método que realiza a somatória das votações da sessão de votação (Poll)
+   * enviada como parâmetro e retorna o resultado no formato de Enum
+   * 
+   * @param pollId identificador único da sessão de votação (Poll)
+   * @throws ResourceNotFoundException caso a sessão de votação (Poll) não exista
+   * @return ResultEnum caso a maioria dos votos tenha sido SIM, retornará
+   *         VoteEnum.APPROVED, caso contrário, retornará VoteEnum.DISAPPROVED
+   */
   public ResultEnum getResult(Long pollId) {
     Poll poll = pollRepository.findById(pollId)
         .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.POLL_NOT_FOUND));
@@ -72,6 +96,16 @@ public class PollService {
     return result;
   }
 
+  /**
+   * Método que verifica se a sessão de votação (Poll) está aberta ou fechada a
+   * partir da data/hora fim definida na criação da sessão de votação.
+   * 
+   * @param pollId identificador único da sessão de votação (Poll)
+   * @throws ResourceNotFoundException caso a sessão de votação (Poll) não exista
+   * @return PollStatusEnum retornará PollStatusEnum.POLL_CLOSED caso a sessão de
+   *         votação (Poll) tenha acabado, caso contrário,
+   *         PollStatusEnum.POLL_OPENED
+   */
   public PollStatusEnum getStatus(Long pollId) {
     Poll poll = pollRepository.findById(pollId)
         .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.POLL_NOT_FOUND));
@@ -105,7 +139,7 @@ public class PollService {
   private void validateTopicRelationship(Topic topic) {
     List<Poll> polls = pollRepository.findAllOpenedPollsByTopic(topic, LocalDateTime.now());
     if (polls.size() > 0) {
-      throw new ApiException(ErrorMessageEnum.POLL_WITH_TOPIC_ALREADY_RUNNING);
+      throw new InvalidParameterException(ErrorMessageEnum.POLL_WITH_TOPIC_ALREADY_RUNNING.getMessage());
     }
   }
 }

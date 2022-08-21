@@ -41,6 +41,18 @@ public class VoteService {
   @Autowired
   CPFClient cpfClient;
 
+  /**
+   * Método para realizar a votação (Vote) na sessão de votação (Poll) criada a
+   * partir da pauta (Topic).
+   * 
+   * @param voteDTO DTO (Data Transfer Object) de votação (Vote)
+   * @throws MissingParameterException caso algum parâmetro obrigatório não seja
+   *                                   enviado pelo DTO
+   * @throws ResourceNotFoundException caso a usuário (User), CPF do usuário ou
+   *                                   sessão de votação (Poll) não exista
+   * @throws ApiException              caso a sessão de votação esteja fechada,
+   *                                   não sendo possível realizar a votação
+   */
   public void createVote(VoteDTO voteDTO) {
     var vote = new Vote();
     BeanUtils.copyProperties(voteDTO, vote);

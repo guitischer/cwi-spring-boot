@@ -20,15 +20,36 @@ public class UserService {
   @Autowired
   private UserRepository userRepository;
 
+  /**
+   * Método que retorna todos os usuários (User) cadastrados
+   * 
+   * @return List<User> lista com os usuários (User) cadastrados
+   */
   public List<User> getUsers() {
     return userRepository.findAll();
   }
 
+  /**
+   * Método que retorna um usuário (User) a partir do ID passado como parâmetro
+   * 
+   * @param id identificar único do usuário (User)
+   * @return User usuário
+   * @throws ResourceNotFoundException caso o usuário (User) não exista
+   */
   public User getUser(Long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.USER_NOT_FOUND));
   }
 
+  /**
+   * Método para realizar a criação do usuário
+   * 
+   * @param userDTO DTO (Data Transfer Object) do usuário (User)
+   * @throws InvalidParameterException caso alguma regra de negócio não cumpra com
+   *                                   o que deveria
+   * @throws MissingParameterException caso algum parâmetro obrigatório não seja
+   *                                   enviado pelo DTO
+   */
   public void saveUser(UserDTO userDTO) {
     var user = new User();
     BeanUtils.copyProperties(userDTO, user);
@@ -39,6 +60,16 @@ public class UserService {
     userRepository.save(user);
   }
 
+  /**
+   * Método para realizar alterações no usuário (User)
+   * 
+   * @param id      identificar único do usuário (User)
+   * @param userDTO DTO (Data Transfer Object) do usuário (User) com as
+   *                informações a serem atualizadas
+   * @throws ResourceNotFoundException caso o usuário (User) não exista
+   * @throws MissingParameterException caso algum parâmetro obrigatório não seja
+   *                                   enviado pelo DTO
+   */
   public void updateUser(Long id, UserDTO userDTO) {
     User currentUser = userRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageEnum.USER_NOT_FOUND));
@@ -47,6 +78,12 @@ public class UserService {
     userRepository.save(currentUser);
   }
 
+  /**
+   * Método para realizar a exclusão do usuário
+   * 
+   * @param id identificar único do usuário (User)
+   * @throws IllegalArgumentException caso o usuário (User) não exista
+   */
   public void deleteUser(Long id) {
     try {
       userRepository.deleteById(id);

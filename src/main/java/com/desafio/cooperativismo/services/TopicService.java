@@ -18,10 +18,22 @@ public class TopicService {
   @Autowired
   TopicRepository topicRepository;
 
+  /**
+   * Método que retorna todas as pautas (Topic)
+   * 
+   * @return List<Topic> lista de pautas (Topic)
+   */
   public List<Topic> getTopics() {
     return topicRepository.findAll();
   }
 
+  /**
+   * Método para realizar a criação da pauta (Topic)
+   * 
+   * @param topicDTO DTO (Data Transfer Object) da pauta (Topic).
+   * @throws MissingParameterException caso algum parâmetro obrigatório não seja
+   *                                   enviado pelo DTO
+   */
   public void createTopic(TopicDTO topicDTO) {
     var topic = new Topic();
     BeanUtils.copyProperties(topicDTO, topic);
@@ -29,7 +41,7 @@ public class TopicService {
     topicRepository.save(topic);
   }
 
-  public void requiredNameValidation(Topic topic) {
+  private void requiredNameValidation(Topic topic) {
     if (topic.getName() == null || topic.getName().equals("")) {
       throw new MissingParameterException(ErrorMessageEnum.REQUIRED_NAME_FIELD);
     }
