@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   API:
-    image: "cooperativismo-api.jar"
+    image: "desafio-cooperativismo.jar"
     ports:
       - "8080:8080"
     depends_on:

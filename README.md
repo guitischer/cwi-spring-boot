@@ -49,11 +49,18 @@ não infrinja direitos de uso).
   ```
 	$ cd desafio-cooperativismo
 	```
-3. Faça o build da aplicação com o Maven
+3. Faça o build da aplicação usando o Maven
   ```
 	$ mvn install -DskipTests
 	```
-4.
+4. Faça o build da imagem usando o Docker
+  ```
+	$ docker build -t desafio-cooperativismo.jar .
+	```
+5. Inicialize a API e o banco de dados PostgreSQL usando o Docker Compose
+  ```
+  $ docker-compose up -d
+  ```
 ## Autor
 
 * **Guilherme Tischer Lopes** - [LinkedIn](https://www.linkedin.com/in/guilherme-tischer/)

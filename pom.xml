@@ -56,7 +56,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>cooperativismo-api</finalName>
+		<finalName>desafio-cooperativismo</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
