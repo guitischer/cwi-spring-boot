@@ -42,25 +42,33 @@ não infrinja direitos de uso).
 ### Deploy via Docker
 
 1. Clone o repositório
-  ```
-	$ https://github.com/guitischer/desafio-cooperativismo.git
-	```
+    ```
+
+    $ https://github.com/guitischer/desafio-cooperativismo.git
+    ```
 2. Acesse a pasta do repositório clonado
-  ```
-	$ cd desafio-cooperativismo
-	```
+    ```
+    
+    $ cd desafio-cooperativismo
+    ```
 3. Faça o build da aplicação usando o Maven
-  ```
-	$ mvn install -DskipTests
-	```
+    ```
+
+    $ .\mvnw install -DskipTests
+    ```
 4. Faça o build da imagem usando o Docker
-  ```
-	$ docker build -t desafio-cooperativismo.jar .
-	```
+    ```
+
+    $ docker build -t desafio-cooperativismo.jar .
+    ```
+
 5. Inicialize a API e o banco de dados PostgreSQL usando o Docker Compose
-  ```
-  $ docker-compose up -d
-  ```
+    ```
+    
+    $ docker-compose up -d
+    ```
+
+
 ## Autor
 
 * **Guilherme Tischer Lopes** - [LinkedIn](https://www.linkedin.com/in/guilherme-tischer/)
