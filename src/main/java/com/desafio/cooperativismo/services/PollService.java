@@ -6,7 +6,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,19 +51,24 @@ public class PollService {
    * @throws InvalidParameterException caso alguma regra de negócio não cumpra com
    *                                   o que deveria
    */
-  public void createPoll(PollDTO pollDTO) {
+  public void createPoll(PollDTO pollDTO) {  
+    requiredTopicValidation(pollDTO);
+
+    Topic topic = checkIfTopicExists(pollDTO.getTopicId());
+
+    validateTopicRelationship(topic);
+
     var poll = new Poll();
-    BeanUtils.copyProperties(pollDTO, poll);
+    poll.setTopic(topic);
 
-    requiredTopicValidation(poll);
-    checkIfTopicExists(pollDTO.getTopic().getId());
-    validateTopicRelationship(pollDTO.getTopic());
-    checkIfPollEndIsNotInThePast(poll);
-
-    if (poll.getEndAt() == null) {
+    if (pollDTO.getEndAt() == null) {
       LocalDateTime today = LocalDateTime.now().plus(Duration.of(1, ChronoUnit.MINUTES));
       poll.setEndAt(today);
+    } else {
+      poll.setEndAt(pollDTO.getEndAt());
     }
+
+    checkIfPollEndIsNotInThePast(poll);
 
     pollRepository.save(poll);
   }
@@ -123,15 +127,16 @@ public class PollService {
     }
   }
 
-  private void checkIfTopicExists(Long topicId) {
+  private Topic checkIfTopicExists(Long topicId) {
     Optional<Topic> topic = topicRepository.findById(topicId);
     if (!topic.isPresent()) {
       throw new ResourceNotFoundException(ErrorMessageEnum.TOPIC_NOT_FOUND);
     }
+    return topic.get();
   }
 
-  private void requiredTopicValidation(Poll poll) {
-    if (poll.getTopic() == null) {
+  private void requiredTopicValidation(PollDTO pollDto) {
+    if (pollDto.getTopicId() == null) {
       throw new MissingParameterException(ErrorMessageEnum.REQUIRED_TOPIC_FIELD);
     }
   }

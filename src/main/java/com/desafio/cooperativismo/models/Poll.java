@@ -37,7 +37,7 @@ public class Poll {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "topic_id", nullable = false)
   private Topic topic;
 

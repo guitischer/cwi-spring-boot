@@ -3,8 +3,6 @@ package com.desafio.cooperativismo.dtos;
 import javax.validation.constraints.NotBlank;
 
 import com.desafio.cooperativismo.enums.VoteEnum;
-import com.desafio.cooperativismo.models.Poll;
-import com.desafio.cooperativismo.models.User;
 
 import lombok.Data;
 
@@ -15,8 +13,8 @@ public class VoteDTO {
   private VoteEnum vote;
 
   @NotBlank
-  private User user;
+  private Long userId;
 
   @NotBlank
-  private Poll poll;
+  private Long pollId;
 }

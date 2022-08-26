@@ -2,7 +2,6 @@ package com.desafio.cooperativismo.services;
 
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,12 +53,15 @@ public class VoteService {
    *                                   não sendo possível realizar a votação
    */
   public void createVote(VoteDTO voteDTO) {
-    var vote = new Vote();
-    BeanUtils.copyProperties(voteDTO, vote);
-    requiredFieldsValidation(vote);
+    requiredFieldsValidation(voteDTO);
 
-    User user = checkIfUserExists(voteDTO.getUser().getId());
-    Poll poll = checkIfPollExists(voteDTO.getPoll().getId());
+    User user = checkIfUserExists(voteDTO.getUserId());
+    Poll poll = checkIfPollExists(voteDTO.getPollId());
+
+    var vote = new Vote();
+    vote.setPoll(poll);
+    vote.setUser(user);
+    vote.setVote(voteDTO.getVote());
 
     checkIfPollIsOpened(poll);
 
@@ -105,16 +107,16 @@ public class VoteService {
 
   }
 
-  private void requiredFieldsValidation(Vote vote) {
-    if (vote.getVote() == null) {
+  private void requiredFieldsValidation(VoteDTO voteDto) {
+    if (voteDto.getVote() == null) {
       throw new MissingParameterException(ErrorMessageEnum.REQUIRED_VOTE_FIELD);
     }
 
-    if (vote.getUser() == null) {
+    if (voteDto.getUserId() == null) {
       throw new MissingParameterException(ErrorMessageEnum.REQUIRED_USER_FIELD);
     }
 
-    if (vote.getPoll() == null) {
+    if (voteDto.getPollId() == null) {
       throw new MissingParameterException(ErrorMessageEnum.REQUIRED_POLL_FIELD);
     }
   }
