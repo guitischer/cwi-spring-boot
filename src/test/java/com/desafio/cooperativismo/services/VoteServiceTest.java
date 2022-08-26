@@ -13,10 +13,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -64,24 +65,27 @@ public class VoteServiceTest {
 
   @Test
   void saveVoteAllArgs_Success() {
+    Vote vote = getVoteAllArgs();
     VoteDTO voteDTO = new VoteDTO();
-    BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+    voteDTO.setPollId(vote.getPoll().getId());
+    voteDTO.setUserId(vote.getUser().getId());
+    voteDTO.setVote(vote.getVote());
 
-    User user = voteDTO.getUser();
-    Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+    User user = vote.getUser();
+    when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
 
     CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE.getResponse())
         .build();
-    Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+    when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
 
-    Poll poll = voteDTO.getPoll();
-    Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+    Poll poll = vote.getPoll();
+    when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
 
-    Mockito.when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
+    when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
 
     voteService.createVote(voteDTO);
 
-    Mockito.verify(voteRepository).save(any(Vote.class));
+    verify(voteRepository).save(any(Vote.class));
   }
 
   @Test
@@ -92,7 +96,7 @@ public class VoteServiceTest {
       voteDTO.setVote(null);
 
       voteService.createVote(voteDTO);
-      Mockito.verify(voteRepository).save(any(Vote.class));
+      verify(voteRepository).save(any(Vote.class));
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_VOTE_FIELD.getMessage()));
@@ -101,27 +105,30 @@ public class VoteServiceTest {
   @Test
   void saveVoteOfSameUser_Fail() {
     DuplicateRecordException exception = Assertions.assertThrows(DuplicateRecordException.class, () -> {
+      Vote vote = getVoteAllArgs();
       VoteDTO voteDTO = new VoteDTO();
-      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+      voteDTO.setPollId(vote.getPoll().getId());
+      voteDTO.setUserId(vote.getUser().getId());
+      voteDTO.setVote(vote.getVote());
 
-      User user = voteDTO.getUser();
-      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+      User user = vote.getUser();
+      when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
 
       CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE.getResponse())
           .build();
-      Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+      when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
 
-      Poll poll = voteDTO.getPoll();
-      Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+      Poll poll = vote.getPoll();
+      when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
 
-      Mockito.when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
-
-      voteService.createVote(voteDTO);
-      Mockito.when(voteRepository.findOneByUserAndPoll(user, poll)).thenReturn(Optional.of(getVoteAllArgs()));
-      Mockito.when(voteRepository.save(any(Vote.class))).thenReturn(getVoteAllArgs());
+      when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
 
       voteService.createVote(voteDTO);
-      Mockito.verify(voteRepository, times(2)).save(any(Vote.class));
+      when(voteRepository.findOneByUserAndPoll(user, poll)).thenReturn(Optional.of(getVoteAllArgs()));
+      when(voteRepository.save(any(Vote.class))).thenReturn(getVoteAllArgs());
+
+      voteService.createVote(voteDTO);
+      verify(voteRepository, times(2)).save(any(Vote.class));
 
     });
 
@@ -131,12 +138,14 @@ public class VoteServiceTest {
   @Test
   void saveVoteWithoutUser_Fail() {
     MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
+      Vote vote = getVoteAllArgs();
       VoteDTO voteDTO = new VoteDTO();
-      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
-      voteDTO.setUser(null);
+      voteDTO.setPollId(vote.getPoll().getId());
+      voteDTO.setUserId(null);
+      voteDTO.setVote(vote.getVote());
 
       voteService.createVote(voteDTO);
-      Mockito.verify(voteRepository).save(any(Vote.class));
+      verify(voteRepository).save(any(Vote.class));
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_USER_FIELD.getMessage()));
@@ -145,12 +154,14 @@ public class VoteServiceTest {
   @Test
   void saveVoteWithoutPoll_Fail() {
     MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
+      Vote vote = getVoteAllArgs();
       VoteDTO voteDTO = new VoteDTO();
-      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
-      voteDTO.setPoll(null);
+      voteDTO.setUserId(vote.getUser().getId());
+      voteDTO.setPollId(null);
+      voteDTO.setVote(vote.getVote());
 
       voteService.createVote(voteDTO);
-      Mockito.verify(voteRepository).save(any(Vote.class));
+      verify(voteRepository).save(any(Vote.class));
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_POLL_FIELD.getMessage()));
@@ -159,20 +170,23 @@ public class VoteServiceTest {
   @Test
   void saveVoteWithNonExistentPoll_Fail() {
     ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+      Vote vote = getVoteAllArgs();
       VoteDTO voteDTO = new VoteDTO();
-      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+      voteDTO.setPollId(vote.getPoll().getId());
+      voteDTO.setUserId(vote.getUser().getId());
+      voteDTO.setVote(vote.getVote());
 
-      User user = voteDTO.getUser();
-      Mockito.when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+      User user = vote.getUser();
+      when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
 
       CPFResponse possibilityToVote = CPFResponse.builder().status(UserVoteEnum.ABLE_TO_VOTE.getResponse())
           .build();
-      Mockito.when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
+      when(cpfClient.getStatus(any(String.class))).thenReturn(possibilityToVote);
 
-      Mockito.when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
+      when(pollService.getStatus(any(Long.class))).thenReturn(PollStatusEnum.POLL_OPENED);
 
       voteService.createVote(voteDTO);
-      Mockito.verify(voteRepository).save(any(Vote.class));
+      verify(voteRepository).save(any(Vote.class));
     });
 
     assertTrue(exception.getMessage().equals(ErrorMessageEnum.POLL_NOT_FOUND.getMessage()));
@@ -181,14 +195,17 @@ public class VoteServiceTest {
   @Test
   void saveVoteWithNonExistentUser_Fail() {
     ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+      Vote vote = getVoteAllArgs();
       VoteDTO voteDTO = new VoteDTO();
-      BeanUtils.copyProperties(getVoteAllArgs(), voteDTO);
+      voteDTO.setPollId(vote.getPoll().getId());
+      voteDTO.setUserId(vote.getUser().getId());
+      voteDTO.setVote(vote.getVote());
 
-      Poll poll = voteDTO.getPoll();
-      Mockito.when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
+      Poll poll = vote.getPoll();
+      when(pollRepository.findById(any(Long.class))).thenReturn(Optional.of(poll));
 
       voteService.createVote(voteDTO);
-      Mockito.verify(voteRepository).save(any(Vote.class));
+      verify(voteRepository).save(any(Vote.class));
     });
 
     assertTrue(exception.getMessage().equals(ErrorMessageEnum.USER_NOT_FOUND.getMessage()));

@@ -16,13 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.BeanUtils;
 
 import com.desafio.cooperativismo.dtos.PollDTO;
 import com.desafio.cooperativismo.enums.ErrorMessageEnum;
@@ -51,48 +52,52 @@ public class PollServiceTest {
     Poll poll2 = getPollAllArgs();
 
     List<Poll> pollList = new ArrayList<>(Arrays.asList(poll1, poll2));
-    Mockito.when(pollRepository.findAll()).thenReturn(pollList);
+    when(pollRepository.findAll()).thenReturn(pollList);
 
     List<Poll> polls = pollService.getPolls();
-    Mockito.verify(pollRepository).findAll();
+    verify(pollRepository).findAll();
 
     assert (polls == pollList);
   }
 
   @Test
   void savePollWithAllArgs_Success() {
+    Poll poll = getPollAllArgs();
     PollDTO pollDTO = new PollDTO();
-    BeanUtils.copyProperties(getPollAllArgs(), pollDTO);
+    pollDTO.setTopicId(poll.getTopic().getId());
+    pollDTO.setEndAt(poll.getEndAt());
 
-    Topic topic = pollDTO.getTopic();
-    Mockito.when(topicRepository.findById(any(Long.class))).thenReturn(Optional.of(topic));
+    Topic topic = poll.getTopic();
+    when(topicRepository.findById(any(Long.class))).thenReturn(Optional.of(topic));
 
     pollService.createPoll(pollDTO);
-    Mockito.verify(pollRepository).save(any(Poll.class));
+    verify(pollRepository).save(any(Poll.class));
   }
 
   @Test
   void savePollWithoutEndAt_Success() {
+    Poll poll = getPollAllArgs();
     PollDTO pollDTO = new PollDTO();
-    BeanUtils.copyProperties(getPollAllArgs(), pollDTO);
+    pollDTO.setTopicId(poll.getTopic().getId());
     pollDTO.setEndAt(null);
 
-    Topic topic = pollDTO.getTopic();
-    Mockito.when(topicRepository.findById(any(Long.class))).thenReturn(Optional.of(topic));
+    Topic topic = poll.getTopic();
+    when(topicRepository.findById(any(Long.class))).thenReturn(Optional.of(topic));
 
     pollService.createPoll(pollDTO);
-    Mockito.verify(pollRepository).save(any(Poll.class));
+    verify(pollRepository).save(any(Poll.class));
   }
 
   @Test
   void savePollWithoutTopic_Fail() {
     MissingParameterException exception = Assertions.assertThrows(MissingParameterException.class, () -> {
+      Poll poll = getPollAllArgs();
       PollDTO pollDTO = new PollDTO();
-      BeanUtils.copyProperties(getPollAllArgs(), pollDTO);
-      pollDTO.setTopic(null);
+      pollDTO.setTopicId(null);
+      pollDTO.setEndAt(poll.getEndAt());
 
       pollService.createPoll(pollDTO);
-      Mockito.verify(pollRepository, Mockito.never()).save(any(Poll.class));
+      verify(pollRepository, never()).save(any(Poll.class));
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_TOPIC_FIELD.getMessage()));

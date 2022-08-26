@@ -11,9 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -41,10 +43,10 @@ public class TopicServiceTest {
     Topic topic2 = getTopicAllArgs();
 
     List<Topic> topicList = new ArrayList<>(Arrays.asList(topic1, topic2));
-    Mockito.when(topicRepository.findAll()).thenReturn(topicList);
+    when(topicRepository.findAll()).thenReturn(topicList);
 
     List<Topic> topics = topicService.getTopics();
-    Mockito.verify(topicRepository).findAll();
+    verify(topicRepository).findAll();
 
     assert (topics == topicList);
   }
@@ -55,7 +57,7 @@ public class TopicServiceTest {
     BeanUtils.copyProperties(getTopicAllArgs(), topicDTO);
 
     topicService.createTopic(topicDTO);
-    Mockito.verify(topicRepository).save(any(Topic.class));
+    verify(topicRepository).save(any(Topic.class));
   }
 
   @Test
@@ -65,7 +67,7 @@ public class TopicServiceTest {
     topicDTO.setDescription(null);
 
     topicService.createTopic(topicDTO);
-    Mockito.verify(topicRepository).save(any(Topic.class));
+    verify(topicRepository).save(any(Topic.class));
   }
 
   @Test
@@ -75,8 +77,10 @@ public class TopicServiceTest {
       BeanUtils.copyProperties(getTopicAllArgs(), topicDTO);
       topicDTO.setName(null);
 
+      when(topicRepository.findByName(topicDTO.getName())).thenReturn(null);
+
       topicService.createTopic(topicDTO);
-      Mockito.verify(topicRepository, Mockito.never()).save(any(Topic.class));
+      verify(topicRepository, never()).save(any(Topic.class));
     });
 
     assertTrue(exception.getMessage().contains(ErrorMessageEnum.REQUIRED_NAME_FIELD.getMessage()));
